@@ -2,9 +2,9 @@
 draft = true
 title = "NYC"
 weight = 1
-image = "img/posts/NYC/Commuting_thumbnail.png"
+image = "img/posts/NYC/Bike_thumbnail.png"
 date = 2019-10-13T17:05:52-04:00
-showonlyimage = true
+showonlyimage = false
 +++
 
 Playing with NYC data
@@ -16,3 +16,7 @@ Playing with NYC data
 <p align="center">
 <img src="/img/posts/NYC/Commuting.png" width=80%>
 </p>
+
+<br>
+
+---

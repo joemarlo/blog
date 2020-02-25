@@ -2,9 +2,9 @@
 draft = true
 title = "F1 Elo"
 weight = 1
-image = "img/posts/F1-elo/F1_Elo_rainbow_thumbnail.png"
+image = "img/posts/F1-elo/F1_Elo_ridge_thumbnail.png"
 date = 2019-10-13T17:47:17-04:00
-showonlyimage = true
+showonlyimage = false
 +++
 
 
