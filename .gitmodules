@@ -2,3 +2,7 @@
 	path = public
 	url = git@github.com:joemarlo/joemarlo.github.io.git
 	branch = master
+[submodule "static/d3"]
+	path = static/d3
+	url = https://github.com/joemarlo/d3.git
+	branch = master
