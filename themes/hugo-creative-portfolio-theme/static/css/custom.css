@@ -23,3 +23,53 @@ pre code {
    width: 100%;
 }
 
+
+/* resizing of h tags for mobile */
+@media (max-width: 767px){
+  h1,
+  .h1 {
+    font-size: 34px;
+  }
+  h2,
+  .h2 {
+    font-size: 28px;
+  }
+  h3,
+  .h3 {
+    font-size: 24px;
+    font-weight: 700;
+  }
+  h4,
+  .h4 {
+    font-size: 20px;
+    font-weight: 700;
+  }
+  h5,
+  .h5 {
+    font-size: 16px;
+    font-weight: 700;
+  }
+  h6,
+  .h6 {
+    font-size: 14px;
+    font-weight: 700;
+  }
+}
+
+/* resizing of homescreen brick images  */
+@media (max-width: 767px){
+  .box-masonry .img-responsive {
+    margin: 0 auto;
+    object-fit: cover;
+    object-position: 100% 80%;
+    width: 100%;
+    height: 100px;
+  }
+}
+
+/* remove text at bottom of masonry */
+@media (max-width: 767px){
+  .box-masonry-description {
+    display: none
+  }
+}

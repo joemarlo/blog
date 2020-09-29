@@ -10,8 +10,8 @@ googleAnalytics = ""
 [params]
   # Style options: default (pink), blue, green, pink, red, sea, violet
   # Use custom.css for your custom styling
-  style = "green"
-  description = "Blog for stats and visualizations"
+  style = "custom"
+  description = "Personal portfolio of Joe Marlo"
   copyright = "&copy;2020 Joe Marlo"
   sidebarAbout = [
     "I'm a statistics grad student @ NYU. <br> Based in New York."
@@ -64,6 +64,8 @@ googleAnalytics = ""
   github        = "https://www.github.com/joemarlo"
 #  youtube       = "full profile url in youtube"
 #  whatsapp      = "wa.me service link"
+
+enableInlineShortcodes = true
 
 [markup]
   [markup.goldmark]

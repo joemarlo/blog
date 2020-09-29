@@ -4,7 +4,7 @@ image = "img/posts/LRC/LRC.gif"
 date = "2019-10-13T14:20:22+05:30"
 showonlyimage = false
 title = "Is it possible to beat Left Right Center?"
-weight = 4
+weight = 9
 +++
 
 *Choosing the right seat at the table*

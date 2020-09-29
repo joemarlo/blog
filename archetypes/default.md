@@ -1,9 +1,9 @@
 +++
 draft = true
 image = "img/posts/FOLDER/THUMBNAIL.png"
-date: {{ .Date }}
+date = {{ .Date }}
 showonlyimage = false
-title: "{{ replace .Name "-" " " | title }}"
+title = "{{ replace .Name "-" " " | title }}"
 weight = 1
 +++
 

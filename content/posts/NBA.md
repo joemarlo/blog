@@ -1,7 +1,7 @@
 +++
 draft = false
 title = "Clustering NBA players"
-weight = 1
+weight = 7
 image = "img/posts/NBA/Kmeans4 _thumbnail.png"
 date = 2020-01-27T13:09:49-05:00
 showonlyimage = false

@@ -1,7 +1,7 @@
 +++
 draft = false
 title = "Optimizing Yahtzee"
-weight = 3
+weight = 9
 image = "img/posts/yahtzee/Expected_roll_outcomes_thumbnail.png"
 date = 2019-10-13T16:26:44-04:00
 showonlyimage = false

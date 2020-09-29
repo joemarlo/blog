@@ -4,7 +4,7 @@ image = "img/posts/last-meals/graph_thumbnail.png"
 date = "2020-02-19T11:16:00-05:00"
 showonlyimage = false
 title = "Text analysis of last meals"
-weight = 1
+weight = 6
 +++
 
 *Examining favorite foods through last meal requests*
@@ -20,7 +20,7 @@ Recently I came across the [last meals Wikipedia page](https://en.wikipedia.org/
 Ice cream. That's what everyone wants. After scraping, cleaning, and tokenizing the text, the most common items are also the most obvious:   ice cream, french  fries, steak, pizza, and fried chicken. These five show up in 66% or in 85 of the cases.
 
 <p align="center">
-<img src="/img/posts/last-meals/Common_last_meals.svg" width=80%>
+<img src="/img/posts/last-meals/Common_last_meals.svg", width=80%>
 </p>
 
 Notably, these top five foods occur 131 times, indicating there are some repeats within a request and/or co-occurrences. That's not all that informative, though. There's a smarter way to explore trends within this dataset. We can look for similarities and differences in meals using [cosine similarity](#cosine-similarity). It allows us to quantify the similarity of vectors based on the count of similar instances between two vectors. I.e. how often do foods co-occur within a last meal. Higher scores will be given to words that co-occur more often signifying strength of the relationships. Performing this for each pair of items, these scores can be graphed to provide a visual sense of any patterns.
@@ -63,21 +63,8 @@ Scraping the tables off Wikipedia is simple using the [rvest package](https://bl
 # scrape the table
 tables <- read_html('https://en.wikipedia.org/wiki/Last_meal') %>% 
   html_nodes(xpath = '//table[contains(@class, "sortable")]') %>% 
-  html_children()
-
-# pull and tidy the US table
-US.table <- tables[4] %>%
-  html_children() %>%
-  html_text() %>%
-  matrix(ncol = 1, byrow = TRUE) %>%
-  as_tibble() %>% 
-  separate(
-    V1,
-    into = c("Name", "Crime", "State", "Year",
-             "Method.of.Dispatch", "Requested.Meal",
-             "tmp", "tmp2", "tmp3", "tmp4", "tmp5"),
-    sep = "\n"
-  )
+  html_table() %>% 
+  .[[4]] 
 ```
 
 We need to remove cases of inmates that didn't request a meal or received a meal that was not requested. We're interested in what people ***wanted*** as their last meal, not necessarily what they received. This also removes some cases such as prisoner's requesting communion in lieu of a meal.
@@ -323,12 +310,31 @@ deduped.ngrams %>%
   ggplot(aes(x = reorder(word, n), y = n, fill = n)) +
   geom_col() +
   scale_fill_gradient(low = "#0b2919", high = "#2b7551") +
+  geom_text(aes(label = n),
+            hjust = 1.5,
+            color = "white") +
+  geom_curve(aes(x = 6.5, y = 40, 
+                 xend = 9, yend = 43),
+             curvature = 0.4, color = '#428fa1', size = 1.25,
+             arrow = arrow(type = 'closed', length = unit(0.4, "cm"))) +
+  annotate("label", x = 6, y = 35, 
+           fill = '#428fa1',
+           label = "'Ice cream' takes the\ntop spot with 43 occurrences\nin last meal requests",
+           fontface = "bold",
+           color = 'white',
+           size = 4,
+           label.size = 1.25,
+           label.padding = unit(0.75, "lines")) +
   labs(title = "Top 10 most common items in last meal requests",
        subtitle = "Data from 130 U.S. inmates since 1927",
+       caption = "marlo.works",
        x = NULL,
        y = "Count") +
   coord_flip() +
-  theme(legend.position = "none")
+  theme(legend.position = "none",
+        plot.caption = element_text(face = "italic",
+                                    size = 6,
+                                    color = 'grey50'))
 ```
 <p align="center">
 <img src="/img/posts/last-meals/Common_last_meals.svg" width=80%>

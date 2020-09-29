@@ -1,7 +1,7 @@
 +++
 draft = false
 title = "Claiming Social Security benefits"
-weight = 2
+weight = 8
 image = "img/posts/Social-Security/Claim_thumbnail.png"
 date = 2020-01-27T21:12:52-05:00
 showonlyimage = false

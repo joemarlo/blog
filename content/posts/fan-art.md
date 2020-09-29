@@ -1,7 +1,7 @@
 +++
 draft = false
 title = "Starburst Art"
-weight = 6
+weight = 12
 image = "img/posts/fan-art/fans_thumbnail.gif"
 date = 2019-10-13T16:40:25-04:00
 showonlyimage = false
