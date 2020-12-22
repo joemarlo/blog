@@ -1,6 +1,6 @@
 +++
 draft = false
-image = "img/posts/covid-nyc-ridership/covid_ridership_thumbnail.png"
+image = "img/posts/covid-nyc-ridership/covid_ridership_thumbnail_small.png"
 date = 2020-09-26T17:40:21-04:00
 showonlyimage = false
 title = "Disparities in the fall of NYC subway ridership"
@@ -64,7 +64,7 @@ To dig deeper into understanding who these persons are, projecting the points on
 
 The first question to be addressed: are smaller decreases in ridership explained by essential worker status? Essential worker status can be approximated based on the industry residents labor in. Aligning these industries to the [Delaware essential industry list](https://coronavirus.delaware.gov/wp-content/uploads/sites/177/2020/04/DE-Industry-List-4.21.pdf) (one of the few discrete lists available), the proportion of essential workers can be estimated (below left). It's difficult to verify the accuracy but it is in line with the US-wide estimate from the Economic Policy Institute which claims [55 million American workers are essential](https://www.epi.org/blog/who-are-essential-workers-a-comprehensive-look-at-their-wages-demographics-and-unionization-rates/).
 
-Second, how does ridership correlate with income? Below right. The [New York Times found](https://www.nytimes.com/interactive/2020/05/15/upshot/who-left-new-york-coronavirus.html) that income was a strong predictor of the emptying of a neighborhood during Covid. Their analysis was based on smartphone location data of residents and excluded commuters.
+Second, how does ridership correlate with income? Below right. The [New York Times found](https://www.nytimes.com/interactive/2020/05/15/upshot/who-left-new-york-coronavirus.html) that income was a strong predictor of the emptying of a neighborhood during Covid. Their analysis was based on smartphone location data of residents and excluded commuters. Additionally, [The City](https://www.thecity.nyc/government/2020/4/12/21247125/garbage-pickups-tell-a-tale-of-two-cities-with-part-of-manhattan-shrinking) found that collected household trash tonnage reduced 5% in the wealthier parts of Manhattan even as NYC overall had a 4.1% increase in trash. That may reflect an exodus of the wealthier residents.
 
 The income story is right in line with expectations with Manhattan and the northern parts of Brooklyn clearly representing the wealthiest neighborhoods. The essential worker map is a mixed bag; parts of Brooklyn and Manhattan contain more essential workers than expected. And some contain less than expected such as East Williamsburg and Bushwick in Brooklyn and Manhattan near Columbia University. However, the Bronx and south Brooklyn contain the most which aligns well with the ridership map.
 
@@ -115,6 +115,31 @@ Unlike income, essential worker status does not appear to have a strong correlat
 
 A linear model fitted with all three variables — essential worker status, household income, and borough — tells a similar story as the plots above. Controlling for household income and borough, a 1 percentage point increase in essential worker status is associated with a 0.4 percentage point increase in subway ridership. Whereas controlling for essential worker status and borough, every 10% increase in household income is associated with a 0.8 percentage point decline in ridership.
 
+<details>
+  <summary><mark><font color="#908f8f">Click for more information on the model</font></mark></summary>
+<blockquote>
+
+The statistical model is specified below. The underlying data generating process is a difference in count data so a Poisson or Negative Binomial may be most appropriate. Stations may also be spatially autocorrelated. A simple OLS linear regression was used for simplicity in interpreting coefficients. The residuals are approximately normally distributed and there is no heteroscedasticity.
+
+<!-- http://docs.mathjax.org/en/latest/basic/mathematics.html -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<font color="#908f8f">
+$$\begin{align}
+Y =\: &\beta_0 + \beta_1 X_1 + \beta_2 X_2 + \beta_3 X_3 \: + \\
+&\beta_4 X_4 + \beta_5 X_5 + \epsilon
+\end{align}$$
+\(Y =\) % change in ridership<br>
+\(X_1 =\) % of workers deemed essential<br>
+\(X_2 =\) log(household income)<br>
+\(X_3 =\) Borough<sub>Brooklyn</sub> <br>
+\(X_4 =\) Borough<sub>Manhattan</sub> <br>
+\(X_5 =\) Borough<sub>Queens</sub> <br>
+</font>
+<br>
+
 <table class="table table-hover table-responsive" style="margin-left: auto; margin-right: auto;">
  <thead>
   <tr>
@@ -132,7 +157,7 @@ A linear model fitted with all three variables — essential worker status, hous
    <td style="text-align:right;"> 0.90 </td>
   </tr>
   <tr>
-   <td style="text-align:left;"> Essential worker status </td>
+   <td style="text-align:left;"> % of workers deemed essential </td>
    <td style="text-align:right;"> 0.43 </td>
    <td style="text-align:right;"> 0.20 </td>
    <td style="text-align:right;"> 0.04 </td>
@@ -164,10 +189,14 @@ A linear model fitted with all three variables — essential worker status, hous
 </tbody>
 </table>
 
-> Formally, the coefficients can be interpreted as:
-> - Controlling for household income and borough, a group of neighborhoods that had a 100 percentage point increase in essential worker status than another group would be expected have to a change in ridership that is 43 percentage points higher.
-> - Controlling for essential worker status and borough, for a 10% increase in household income, the difference in expected mean ridership change between two groups of neighborhoods will be -0.08 * log(1.10) = -0.77 percentage points.
+Formally, the coefficients can be interpreted as:
+- Controlling for household income and borough, a group of neighborhoods that had a 100 percentage point increase in essential worker status than another group would be expected have to a change in ridership that is 43 percentage points higher.
+- Controlling for essential worker status and borough, for a 10% increase in household income, the difference in the change of mean ridership between two groups of neighborhoods is expected to be -0.08 * log(1.10) = -0.77 percentage points.
 
+</blockquote>
+</details>
+
+<br>
 <br>
 
 ### Pulling it all together
@@ -202,7 +231,6 @@ There are a handful of limitations to this data and analysis to be aware of:
 - These data are not evaluated on causality merits. While there may be strong correlations between ridership and income, it does not suggest that one directly leads to the other. Similarly, using ridership as a proxy for "social distancing", or some similar societal conformity measure, is fraught mostly due to the non-resident point above.
 - The subway ridership data is messy. Calculating ridership and matching to station location has room for error. Some stations may not be perfectly mapped.
 - Essential worker status is estimated from the ACS respondent's [NAICS](https://www.census.gov/eos/www/naics/) industry and the published Delaware list of essential industries. These may not be in full agreement with New York State's guidelines.  
-
 
 <br>
 

@@ -1,6 +1,6 @@
 +++
 draft = false
-image = "img/posts/last-meals/graph_thumbnail.png"
+image = "img/posts/last-meals/graph_thumbnail_small.png"
 date = "2020-02-19T11:16:00-05:00"
 showonlyimage = false
 title = "Text analysis of last meals"
@@ -29,7 +29,7 @@ Notably, these top five foods occur 131 times, indicating there are some repeats
 <img src="/img/posts/last-meals/last_meals_graph.svg" width=80%>
 </p>
 
-There are two clear communities. In the top-left section, simple comfort food such as mashed potatoes, gravy, tea, peas, and rice all naturally go together. In the center-right section, indulgent food such as hamburger, onion rings, fried chicken, and steak are grouped. Intuitively, cheese is stuck right in the middle of these two groups. I interpret this as it's the great equalizer, almost everyone loves cheese and it goes with almost any food. 
+There are two clear communities. In the top-left section, simple comfort food such as mashed potatoes, gravy, tea, peas, and rice all naturally go together. In the center-right section, indulgent food such as hamburger, onion rings, fried chicken, and steak are grouped. Intuitively, cheese is stuck right in the middle of these two groups. I interpret this as it's the great equalizer, almost everyone loves cheese and it goes with almost any food.
 
 <br>
 
@@ -61,10 +61,10 @@ Scraping the tables off Wikipedia is simple using the [rvest package](https://bl
 
 ```
 # scrape the table
-tables <- read_html('https://en.wikipedia.org/wiki/Last_meal') %>% 
-  html_nodes(xpath = '//table[contains(@class, "sortable")]') %>% 
-  html_table() %>% 
-  .[[4]] 
+tables <- read_html('https://en.wikipedia.org/wiki/Last_meal') %>%
+  html_nodes(xpath = '//table[contains(@class, "sortable")]') %>%
+  html_table() %>%
+  .[[4]]
 ```
 
 We need to remove cases of inmates that didn't request a meal or received a meal that was not requested. We're interested in what people ***wanted*** as their last meal, not necessarily what they received. This also removes some cases such as prisoner's requesting communion in lieu of a meal.
@@ -82,7 +82,7 @@ head(US.table)
 2 Aileen Wuo… Serial k… Flori…  2002 Lethal injection "Declined a special meal, but had a hamburger and o…
 3 Allen Lee … Murderer  Flori…  1999 Electrocution    "350-pound \"Tiny\" Davis had one lobster tail, fri…
 4 Alton Cole… Spree Ki… Ohio    2002 Lethal injection "Well done filet mignon smothered with mushrooms, f…
-5 Andrew Lac… Murderer  Alaba…  2013 Lethal injection "Turkey bologna, French fries, and grilled cheese." 
+5 Andrew Lac… Murderer  Alaba…  2013 Lethal injection "Turkey bologna, French fries, and grilled cheese."
 6 Ángel Niev… Murderer  Flori…  2006 Lethal injection "Declined a special meal. He was served the regular…
 ```
 
@@ -93,15 +93,15 @@ head(US.table)
 The first challenge is separating all the food related words and phrases from the non-food. This could be quite easy or quite difficult depending on meal description. For example,
 
 > *"Salmon and potatoes."*
- 
+
 is straightforward. Each item is a food word. We just need to extract the words 'salmon' and 'potatoes.'
 
 Using the [tidytext package](https://cran.r-project.org/web/packages/tidytext/vignettes/tidytext.html) we can pull out the words (or unigrams) using `unnest_tokens()` and remove the stop words ('and', 'is', 'a', etc.) by anti-joining with the built-in stop_words dataset.
 
 ```
 parsed.words <- US.table %>%
-  select(Name, Requested.Meal) %>% 
-  unnest_tokens(output = word, input = Requested.Meal) %>% 
+  select(Name, Requested.Meal) %>%
+  unnest_tokens(output = word, input = Requested.Meal) %>%
   anti_join(stop_words, by = "word")
 
 head(parsed.words)
@@ -115,7 +115,7 @@ head(parsed.words)
 3 Adam Kelly Ward tacos  
 4 Adam Kelly Ward spanish
 5 Adam Kelly Ward rice   
-6 Adam Kelly Ward salsa 
+6 Adam Kelly Ward salsa
 ```
 
 However, there's two major issues: 1. it's not finding items that consist of one or more words like "ice cream" and 2. it's finding irrelevant words like "wishing."
@@ -124,7 +124,7 @@ Now consider the following example:
 
 > *"Morrow requested a last meal of a hamburger with mayonnaise, two chicken and waffle meals, a pint of butter pecan ice cream, a bag of buttered popcorn, two all-beef franks, and a large lemonade."*
 
-How would you systematically go through this and decide which words or series of words to keep? 
+How would you systematically go through this and decide which words or series of words to keep?
 
 First, let's replace the unigram method with uni-, bi- and trigrams. This will return all permutations of 1, 2, and 3 word phrases. In the above example, the four word phrase 'butter pecan ice cream' would return the follow variations:
 
@@ -134,16 +134,16 @@ butter pecan
 butter pecan ice
 pecan           
 pecan ice       
-pecan ice cream 
+pecan ice cream
 ice             
 ice cream       
-cream 
+cream
 ```
 ```
 # tokenize the meals
 parsed.ngrams <- US.table %>%
-  select(Name, Requested.Meal) %>% 
-  unnest_tokens(output = word, input = Requested.Meal, token = "ngrams", n = 3, n_min = 1) %>% 
+  select(Name, Requested.Meal) %>%
+  unnest_tokens(output = word, input = Requested.Meal, token = "ngrams", n = 3, n_min = 1) %>%
   anti_join(stop_words, by = "word")
 ```
 <br>
@@ -154,12 +154,12 @@ Second, we need a way to understand if the word is in fact food- or meal-related
 
 ```
 # import the food words from the Foodbase corpus
-food.words  <- read_xml('Data/Foodbase/FoodBase_uncurated.xml') %>% 
+food.words  <- read_xml('Data/Foodbase/FoodBase_uncurated.xml') %>%
   xml_find_all(xpath = "/collection/document/annotation/text") %>%
-  xml_text() %>% 
-  unique() %>% 
-  enframe(value = "word") %>% 
-  select(-name) %>% 
+  xml_text() %>%
+  unique() %>%
+  enframe(value = "word") %>%
+  select(-name) %>%
   str_to_lower()
 
 # remove copmmon condiments from the food words list
@@ -172,7 +172,7 @@ food.words <- food.words[!(food.words %in% excl.words)]
 food.words <- append(food.words, c("coke", "pepsi"))
 ```
 ```
-parsed.ngrams <- parsed.ngrams %>% 
+parsed.ngrams <- parsed.ngrams %>%
   filter(word %in% food.words)
 head(parsed.ngrams)
 ```
@@ -196,20 +196,20 @@ After filtering for food-related words, we are left with `pecan ice cream`, `ice
 # split the $word with more than one word into a list
 #  then split the dataframe by $Name
 # remove unrelated words
-name.groups <- parsed.ngrams %>% 
-  mutate(word = str_split(word, pattern = " ")) %>% 
-  group_by(Name) %>% 
+name.groups <- parsed.ngrams %>%
+  mutate(word = str_split(word, pattern = " ")) %>%
+  group_by(Name) %>%
   group_split()
 
-# check to see if the $word is contained within 
+# check to see if the $word is contained within
 #  another $word for that $Name
 deduped.ngrams <- lapply(name.groups, function(group) {
-  
+
   # if only one unique word then return that one word
   if (length(unique(group$word)) == 1) {
     non.duplicates <- group$word[1]
   } else{
-    # for groups that have more than one row check to 
+    # for groups that have more than one row check to
     #   see if a word is contained in another row
     duplicate.bool <-
       sapply(1:length(group$word), function(i) {
@@ -221,9 +221,9 @@ deduped.ngrams <- lapply(name.groups, function(group) {
         })
         return(sum(word.in.list) == 0)
       })
-    
+
     non.duplicates <- group$word[duplicate.bool]
-    
+
     # remove $words that are more than two
     #  individual words (e.g. "chocolate ice cream") b/c
     #  these will be captured in "ice cream"
@@ -234,9 +234,9 @@ deduped.ngrams <- lapply(name.groups, function(group) {
 rm(name.groups)
 
 # unlist the word column
-deduped.ngrams <- deduped.ngrams %>% 
-  rowwise() %>% 
-  mutate(word = paste0(word, collapse = " ")) %>% 
+deduped.ngrams <- deduped.ngrams %>%
+  rowwise() %>%
+  mutate(word = paste0(word, collapse = " ")) %>%
   ungroup()
 ```
 <br>
@@ -248,7 +248,7 @@ I like to do a quick manual check to see if there are any obvious issues that th
 get_top_matches <- function(current.word, words.to.match, n = 5){
   # function returns that top n matches of the current.word
   #   within the words.to.match list via fuzzy string matching
-  
+
   scores <- stringsim(current.word, words.to.match, method = "osa")
   words.to.match[rev(order(scores))][1:(n + 1)]
 }
@@ -257,11 +257,11 @@ get_top_matches <- function(current.word, words.to.match, n = 5){
 #  containing the current.name and it's top 5 best matches
 lapply(deduped.ngrams$word,
                       get_top_matches,
-                      words.to.match = unique(deduped.ngrams$word)) %>% 
-  unlist() %>% 
-  matrix(ncol = 6, byrow = TRUE) %>% 
-  as_tibble() %>% 
-  setNames(c("Current.word", paste0("Match.", 1:5))) %>% 
+                      words.to.match = unique(deduped.ngrams$word)) %>%
+  unlist() %>%
+  matrix(ncol = 6, byrow = TRUE) %>%
+  as_tibble() %>%
+  setNames(c("Current.word", paste0("Match.", 1:5))) %>%
   head()
 ```
 ```
@@ -271,7 +271,7 @@ lapply(deduped.ngrams$word,
 1 beef         bean       beverag   veget      bagel   bread     
 2 taco         nacho      bacon     potato     tail    tomato    
 3 rice         ice        piec      rib        lime    pie       
-4 salsa        salt       salad     salmon     salami  small cak 
+4 salsa        salt       salad     salmon     salami  small cak
 5 corn         popcorn    can       cook       pork    cob       
 6 refried bean baked bean fried egg green bean fried w jelly bean
 ```
@@ -282,7 +282,7 @@ Any duplication issues would be evident if the `Current.word` column matches any
 We're now left with just `ice cream`. Next, we need to [stem the words](https://en.wikipedia.org/wiki/Stemming) to get the word into its base form. This is to ensure we aren't separately counting 'hamburger' and 'hamburgers.' In our case, we're going to use a simpler word stemmer as we're mostly just removing plurality. There are more [sophisticated word stemers](https://cran.r-project.org/web/packages/corpus/vignettes/stemmer.html) if you have a more complex problem.
 
 ```
-deduped.ngrams <- deduped.ngrams %>% 
+deduped.ngrams <- deduped.ngrams %>%
   mutate(stem = wordStem(word, language = 'english'))
 ```
 <br>
@@ -292,32 +292,32 @@ And finally we can plot the most popular items. The only trick here is we want t
 
 ```
 # get most common word for each stem
-unique.stem.word.pairs <- deduped.ngrams %>% 
+unique.stem.word.pairs <- deduped.ngrams %>%
   select(stem, word) %>%
-  group_by(stem, word) %>% 
-  summarize(n = n()) %>% 
-  group_by(stem) %>% 
-  filter(n == max(n)) %>% 
+  group_by(stem, word) %>%
+  summarize(n = n()) %>%
+  group_by(stem) %>%
+  filter(n == max(n)) %>%
   select(-n)
 
 # plot the total counts of stems, but use the word as the label
-deduped.ngrams %>% 
+deduped.ngrams %>%
   group_by(stem) %>%
   summarize(n = n()) %>%
   arrange(desc(n)) %>%
-  top_n(n = 10, wt = n) %>% 
-  left_join(unique.stem.word.pairs) %>% 
+  top_n(n = 10, wt = n) %>%
+  left_join(unique.stem.word.pairs) %>%
   ggplot(aes(x = reorder(word, n), y = n, fill = n)) +
   geom_col() +
   scale_fill_gradient(low = "#0b2919", high = "#2b7551") +
   geom_text(aes(label = n),
             hjust = 1.5,
             color = "white") +
-  geom_curve(aes(x = 6.5, y = 40, 
+  geom_curve(aes(x = 6.5, y = 40,
                  xend = 9, yend = 43),
              curvature = 0.4, color = '#428fa1', size = 1.25,
              arrow = arrow(type = 'closed', length = unit(0.4, "cm"))) +
-  annotate("label", x = 6, y = 35, 
+  annotate("label", x = 6, y = 35,
            fill = '#428fa1',
            label = "'Ice cream' takes the\ntop spot with 43 occurrences\nin last meal requests",
            fontface = "bold",
@@ -354,26 +354,26 @@ Try your hand at entering meals and seeing how similar they are. The table is th
   <iframe src="https://jmarlo.shinyapps.io/Last-meals-cosine/" allowfullscreen></iframe>
 </div>
 
- 
+
 <br>
- 
-The above illustration compares two meals. We need to flip these cosine similarity vectors so we can find relationships between food items. Instead of having a vector for `Meal one` and `Meal two` we'll have a vector for `cake`, one for `celeri`, one for `coffe`, etc. Each element of the vector would be a meal. It's effectively a transposed version of the above table. 
+
+The above illustration compares two meals. We need to flip these cosine similarity vectors so we can find relationships between food items. Instead of having a vector for `Meal one` and `Meal two` we'll have a vector for `cake`, one for `celeri`, one for `coffe`, etc. Each element of the vector would be a meal. It's effectively a transposed version of the above table.
 
 > Note: this next function `cosine_matrix()` is stolen from [markhw.com](https://www.markhw.com/blog/word-similarity-graphs) and modified to fit our needs. I encourage you to read his article as well, especially if you would like to learn about the hyperparameter tuning and clustering based on cosine similarity
 
 ```
 cosine_matrix <- function(tokenized_data, lower = 0, upper = 1, filt = 0) {
-  
+
   if (!all(c("stem", "Name") %in% names(tokenized_data))) {
     stop("tokenized_data must contain variables named stem and Name")
   }
-  
+
   if (lower < 0 | lower > 1 | upper < 0 | upper > 1 | filt < 0 | filt > 1) {
     stop("lower, upper, and filt must be 0 <= x <= 1")
   }
-  
+
   docs <- length(unique(tokenized_data$Name))
-  
+
   out <- tokenized_data %>%
     count(Name, stem) %>%
     group_by(stem) %>%
@@ -386,11 +386,11 @@ cosine_matrix <- function(tokenized_data, lower = 0, upper = 1, filt = 0) {
     select(-Name) %>%
     as.matrix() %>%
     lsa::cosine()
-  
+
   filt <- quantile(out[lower.tri(out)], filt)
   out[out < filt] <- diag(out) <- 0
   out <- out[rowSums(out) != 0, colSums(out) != 0]
-  
+
   return(out)
 }
 
@@ -417,13 +417,13 @@ The `cosine_matrix()` function does what it sounds likes: returns a matrix of th
 
 ```
 set.seed(26)
-graph_from_adjacency_matrix(cos_mat, 
-                            mode = "undirected", 
+graph_from_adjacency_matrix(cos_mat,
+                            mode = "undirected",
                             weighted = TRUE) %>%
   ggraph(layout = 'nicely') +
   geom_edge_link(aes(alpha = weight),
                  show.legend = FALSE,
-                 color = "#2b7551") + 
+                 color = "#2b7551") +
   geom_node_label(aes(label = name),
                   label.size = 0.1,
                   size = 3,
@@ -434,7 +434,7 @@ graph_from_adjacency_matrix(cos_mat,
 <img src="/img/posts/last-meals/last_meals_graph.svg" width=80%>
 </p>
 
-There are two clear communities. In the top-left section, simple comfort food such as mashed potatoes, gravy, tea, peas, and rice all naturally go together. In the center-right section, indulgent food such as hamburger, onion rings, fried chicken, and steak are grouped. Intuitively, cheese is stuck right in the middle of these two groups. I interpret this as it's the great equalizer, almost everyone loves cheese and it goes with almost any food. 
+There are two clear communities. In the top-left section, simple comfort food such as mashed potatoes, gravy, tea, peas, and rice all naturally go together. In the center-right section, indulgent food such as hamburger, onion rings, fried chicken, and steak are grouped. Intuitively, cheese is stuck right in the middle of these two groups. I interpret this as it's the great equalizer, almost everyone loves cheese and it goes with almost any food.
 
 It's important to view this graph a few different times with various random seeds. There's many correct ways to visualize the same graph and sometimes you can draw the wrong conclusions from a single visualization so it's important to take the above conclusions with some reservation. The below animation is the same data plotted 20 times with different seeds. Each plot varies but over the series of plots there's still two consistent clusters.
 
@@ -445,7 +445,7 @@ It's important to view this graph a few different times with various random seed
 <br>
 
 ### Regional differences <a id="regional-differences"></a>
-I wanted to explore regional groupings but the data is much too skewed towards the South so any conclusions would be biased. It would be interesting to see if, for example, do southerners really enjoy home style more than others? Do midwesterners prefer corn? In lieu, we can do a simple count of the top items from each region. Note that the region is the region is which the execution occurred, not necessarily where the person was born. 
+I wanted to explore regional groupings but the data is much too skewed towards the South so any conclusions would be biased. It would be interesting to see if, for example, do southerners really enjoy home style more than others? Do midwesterners prefer corn? In lieu, we can do a simple count of the top items from each region. Note that the region is the region is which the execution occurred, not necessarily where the person was born.
 
 <p align="center">
 <img src="/img/posts/last-meals/last_meals_region.svg" width=80%>

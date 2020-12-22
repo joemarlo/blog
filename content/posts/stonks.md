@@ -1,6 +1,6 @@
 +++
 draft = false
-image = "img/posts/stonks/stonks_thumbnail.png"
+image = "img/posts/stonks/stonks_thumbnail_small.png"
 date = 2020-09-26T14:31:39-04:00
 showonlyimage = false
 title = "Stonks only go up, but does Robinhood usage follow?"
@@ -14,18 +14,18 @@ weight = 1
 <br>
 
 
-Amid the economic uncertainty, increased time spent at home, and $1,200 stimulus checks, the spring and summer of 2020 witnessed noticeable increases in retail stock and ETF trading. The majority of this rise has taken place on the popular trading app [Robinhood](https://robinhood.com/us/en/), which allows retail traders to trade commission-free.
+Amid the economic uncertainty, increased time spent at home, and $1,200 stimulus checks, the spring and summer of 2020 witnessed noticeable increases in retail stock and ETF trading. Much of this rise has taken place on the popular trading app [Robinhood](https://robinhood.com/us/en/), which allows retail traders to trade commission-free.
 
 <br>
 
-<div class="frame">
+<div class="frame" >
   <img src="/img/posts/stonks/RH_usage.png">
 </div>
 
 <br>
 <br>
 
-The rise of retail trading, much of which has occurred on Robinhood, shook the market with seemingly irrational trades such as a [large number of retail traders buying assets in Hertz after the company filed for bankruptcy](https://www.forbes.com/advisor/investing/robinhood-bankrupt-hertz/). As retail investors become more relevant to market insight, the popular subreddit [r/wallstreetbets](https://www.reddit.com/r/wallstreetbets/) (WSB), which self-describes as "Like 4chan found a Bloomberg Terminal", has received increasing attention as a source of information to explain the mindset of retail traders. As of today, the subreddit has over 1.5 million followers and has been described by a [Bloomberg piece](https://www.bloomberg.com/news/articles/2020-09-15/big-investors-are-dying-to-know-what-the-little-guys-are-doing) as a "must-read" to understand the mindset of retail traders.
+The rise of retail trading shook the market with seemingly irrational trades such as a [large number of retail traders buying assets in Hertz after the company filed for bankruptcy](https://www.forbes.com/advisor/investing/robinhood-bankrupt-hertz/). As retail investors become more relevant to market insight, the popular subreddit [r/wallstreetbets](https://www.reddit.com/r/wallstreetbets/) (WSB), which self-describes as "Like 4chan found a Bloomberg Terminal", has received increasing attention as a source of information to explain the mindset of retail traders. As of today, the subreddit has over 1.5 million followers and has been described by a [Bloomberg piece](https://www.bloomberg.com/news/articles/2020-09-15/big-investors-are-dying-to-know-what-the-little-guys-are-doing) as a "must-read" to understand the mindset of retail traders.
 
 <br>
 

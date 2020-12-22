@@ -1,6 +1,6 @@
 +++
 draft = false
-image = "img/posts/ATUS/ATUS_thumbnail.png"
+image = "img/posts/ATUS/ATUS_thumbnail_small.png"
 date = "2020-02-29T20:00:56-05:00"
 showonlyimage = false
 title = "How Americans spend their time"
@@ -46,7 +46,7 @@ Let's solidify those curiosities into specific questions:
   <summary><mark><font color="grey">Click for survey info, caveats, and interpretation guidance</font></mark></summary>
 <blockquote>
 
-#### Survey information 
+#### Survey information
 - Contains nationally representative estimates of how, where, and with whom Americans spend their time
 - Covers 200,000 interviews conducted from 2003 to 2018
 - Can be linked to [Current Population Survey](https://www.census.gov/programs-surveys/cps.html) for detailed household demographic information
@@ -125,7 +125,7 @@ Time spent working has declined, however time spent by participants (i.e. worker
 
 ### Unemployment
 
-Are people spending less time searching for jobs, given the unemployment rate is so low? Minutes spent and participation rates are down for job search related activities. This could be attributed to lower unemployment or, conversely, to lower labor force participation. 
+Are people spending less time searching for jobs, given the unemployment rate is so low? Minutes spent and participation rates are down for job search related activities. This could be attributed to lower unemployment or, conversely, to lower labor force participation.
 
 <p align="center">
 <img src="/img/posts/ATUS/job_search.svg" width=80%>
@@ -153,7 +153,7 @@ Are people spending less time searching for jobs, given the unemployment rate is
 ## Methodology
 
 ### Approach
-The ATUS can be complex to work with given its many levels of data. I've been working with the multi-year files that span 2003-2018 and just within these, there is: 
+The ATUS can be complex to work with given its many levels of data. I've been working with the multi-year files that span 2003-2018 and just within these, there is:
 - Summary activity file: information about the total time each ATUS respondent spent doing each activity
 - Activity file: a detailed version of the summary file. Includes start and stop times and location
 - CPS file: information on the household's demographics
@@ -170,8 +170,8 @@ All of the plots in this post are derived from the summary activity file and the
 - Self care, not elsewhere classified                   
 - Personal/Private activities           
 - Personal activities, not elsewhere classified          
-- Personal emergencies 
-- Personal care emergencies, not elsewhere classified 
+- Personal emergencies
+- Personal care emergencies, not elsewhere classified
 - Personal care, not elsewhere classified
 
 Given there is so much to explore in the ATUS, it was important to have a few flexible functions that return time-use estimates with little hassle. The biggest challenge when writing these functions is properly applying the survey weights. Extra care needs to be exercised when determining when and how to apply these weights. The below code walks through how the weights are applied; the results have been compared to the [official summary estimates from the BLS](https://www.bls.gov/tus/#tables) where applicable.
@@ -180,7 +180,7 @@ Given there is so much to explore in the ATUS, it was important to have a few fl
 
 Estimating the average minutes spent in an activity can be calculated by taking the sumproduct of the weights and responses and then dividing by the total weights.
 
-Formally: 
+Formally:
 
 <!-- http://docs.mathjax.org/en/latest/basic/mathematics.html -->
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -202,9 +202,9 @@ What that means in practice is we multiply the respondent's weight by their time
 
 ```
 # select identifier, weight, and sleep
-atussum_0318 %>% 
+atussum_0318 %>%
  select(TUCASEID, TUFNWGTP, 't010101') %>%
- summarize(weighted.minutes = sum(TUFNWGTP * t010101) / sum(TUFNWGTP)) 
+ summarize(weighted.minutes = sum(TUFNWGTP * t010101) / sum(TUFNWGTP))
 ```
 ```
 # A tibble: 1 x 1
@@ -219,12 +219,12 @@ And we can expand it to multiple variables by pivoting the whole dataframe of th
 # select all activities
 activities <- str_subset(names(atussum_0318), '^t[0-9]')
 
-atussum_0318 %>% 
+atussum_0318 %>%
    select(TUCASEID, TUFNWGTP, activities) %>%
    pivot_longer(cols = -c('TUCASEID', 'TUFNWGTP'),
                 names_to = "activity",
                 values_to = 'time') %>%
-   group_by(activity) %>% 
+   group_by(activity) %>%
    summarize(weighted.minutes = sum(TUFNWGTP * time) / sum(TUFNWGTP)) %>%
    ungroup()
 ```
@@ -236,11 +236,11 @@ atussum_0318 %>%
  2 t010102           3.78   
  3 t010199           0.00520
  4 t010201          40.6    
- 5 t010299           0.0439 
+ 5 t010299           0.0439
  6 t010301           4.62   
  7 t010399           0.166  
  8 t010401           0.546  
- 9 t010499           0.0151 
+ 9 t010499           0.0151
 10 t010501           0.00203
 # … with 421 more rows
 ```
@@ -251,12 +251,12 @@ Now add an input grouping variable so we can properly subset by additional varia
 # group by sex and age
 groups <- c('TESEX', 'TEAGE')
 
-atussum_0318 %>% 
+atussum_0318 %>%
   select(TUCASEID, TUFNWGTP, groups, activities) %>%
   pivot_longer(cols = -c('TUCASEID', 'TUFNWGTP', groups),
                names_to = "activity",
                values_to = 'time') %>%
-  group_by_at(vars(activity, groups)) %>% 
+  group_by_at(vars(activity, groups)) %>%
   summarize(weighted.minutes = sum(TUFNWGTP * time) / sum(TUFNWGTP)) %>%
   ungroup()
 ```
@@ -301,20 +301,20 @@ print(simplify)
 # … with 421 more rows
 ```
 ```
-atussum_0318 %>% 
+atussum_0318 %>%
   select(TUCASEID, TUFNWGTP, groups, activities) %>%
   pivot_longer(cols = -c('TUCASEID', 'TUFNWGTP', groups),
                names_to = "activity",
                values_to = 'time') %>%
-  group_by_at(vars(activity, groups)) %>% 
+  group_by_at(vars(activity, groups)) %>%
   summarize(weighted.minutes = sum(TUFNWGTP * time) / sum(TUFNWGTP)) %>%
-  ungroup() %>% 
+  ungroup() %>%
   left_join(x = .,
             y = simplify,
-            by = 'activity') %>% 
-  select(activity = description, groups, weighted.minutes) %>% 
+            by = 'activity') %>%
+  select(activity = description, groups, weighted.minutes) %>%
   group_by_at(vars(activity, groups)) %>%
-  summarize(weighted.minutes = sum(weighted.minutes)) %>% 
+  summarize(weighted.minutes = sum(weighted.minutes)) %>%
   ungroup()
 ```
 ```
@@ -329,8 +329,8 @@ atussum_0318 %>%
  6 Caring For Household Member     1    20             5.45
  7 Caring For Household Member     1    21             6.74
  8 Caring For Household Member     1    22             7.98
- 9 Caring For Household Member     1    23            10.2 
-10 Caring For Household Member     1    24            14.4 
+ 9 Caring For Household Member     1    23            10.2
+10 Caring For Household Member     1    24            14.4
 # … with 2,000 more rows
 ```
 <br>
@@ -339,7 +339,7 @@ Finally, we can wrap it in a function call `get_minutes()`. The magic of this fu
 
 ```
 television.codes <- c('t120303', 't120304')
-get_minutes(atussum_0318, groups = c('TUYEAR', 'TEAGE'), 
+get_minutes(atussum_0318, groups = c('TUYEAR', 'TEAGE'),
             activities = television.codes, simplify = TRUE)
 ```
 ```
@@ -365,7 +365,7 @@ get_minutes(atussum_0318, groups = c('TUYEAR', 'TEAGE'),
 
 The second most interesting statistic in the ATUS is estimates of the proportion of people participating in an activity. It can be estimated similar to the average time statistic but instead of multiplying by the time estimate, we multiply by an indicator representing if the respondent participated in the activity or not.
 
-Formally: 
+Formally:
 
 <!-- http://docs.mathjax.org/en/latest/basic/mathematics.html -->
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -384,18 +384,18 @@ $$P_j = \frac{\sum_i W_i I_{ij}}{\sum_i W_i}$$<br>
 Applying the participation rate formula is a little more difficult than the mean time estimates. The best method I found was to leverage [`dplyr::group_modify`](https://dplyr.tidyverse.org/reference/group_map.html) which applies a function to each grouping variable. The grouping variable is the same as in the time-estimate calculations. I imagine there may be a faster method than mine below such as a matrix approach but this method is consistent with the dplyr pipe syntax.
 
 ```
-atussum_0318 %>% 
+atussum_0318 %>%
   select(TUCASEID, TUFNWGTP, groups, activities) %>%
   pivot_longer(cols = -c('TUCASEID', 'TUFNWGTP', groups),
                names_to = "activity",
                values_to = 'time') %>%
-  group_by_at(vars(activity, groups)) %>% 
+  group_by_at(vars(activity, groups)) %>%
   summarize(weighted.minutes = sum(TUFNWGTP * time) / sum(TUFNWGTP)) %>%
-  ungroup() %>% 
+  ungroup() %>%
   left_join(x = .,
             y = simplify,
-            by = 'activity') %>% 
-  select(activity = description, groups, weighted.minutes) %>% 
+            by = 'activity') %>%
+  select(activity = description, groups, weighted.minutes) %>%
   group_by_at(vars(activity, groups)) %>%
   group_modify(~ {
       # sum the distinct weights that have time > 0
@@ -405,14 +405,14 @@ atussum_0318 %>%
         distinct() %>%
         pull(weight.var) %>%
         sum()
-      
+
       # sum all distinct weights
-      denom <- .x %>% 
+      denom <- .x %>%
         select(TUCASEID, weight.var) %>%
         distinct() %>%
         pull(weight.var) %>%
         sum()
-      
+
       return(tibble(participation.rate = num / denom))
     }) %>%
     ungroup()
@@ -422,7 +422,7 @@ atussum_0318 %>%
 ### Calculating standard errors
 The ATUS uses a replicate approach to calculate standard errors. Each statistic of interest is recalculated using the 160 replicate weights, then we take the squared distance from the original statistic, sum and multiply by 4/160. Finally, take the square-root to get the standard error.
 
-Formally: 
+Formally:
 
 <!-- http://docs.mathjax.org/en/latest/basic/mathematics.html -->
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -442,7 +442,7 @@ $$Var(\hat{Y}_o) = \frac{4}{160} \sum_{i=1}^{160}(\hat{Y}_i - \hat{Y}_o)^2$$<br>
 get_SE <- function(df, groups, activities = NULL) {
   # function returns the standard error of the weighted means
   # see get_minutes() for underlying calculations
-  
+
   # calculate the original statistic
   y0 <- get_minutes(
     df = df,
@@ -450,7 +450,7 @@ get_SE <- function(df, groups, activities = NULL) {
     activities = activities,
     simplify = TRUE
   )
-  
+
   # repeat the statistic calculation using each weight
   yIs <- apply(atuswgts_0318[, -1], MARGIN = 2, FUN = function(wgt) {
     df[, 'TUFNWGTP'] <- wgt
@@ -463,16 +463,16 @@ get_SE <- function(df, groups, activities = NULL) {
     return(minutes$weighted.minutes)
     }
   )
-  
+
   # calculate the standard error
   y0$SE <- sqrt((4 / 160) * rowSums((yIs - y0$weighted.minutes) ^ 2))
-  
+
   return(y0)
 }
 
 get_SE(df = atussum_0318,
-       groups = c('TEAGE', 'TESEX'), 
-       activities = c('t120303', 't120304')) %>% 
+       groups = c('TEAGE', 'TESEX'),
+       activities = c('t120303', 't120304')) %>%
   ggplot() + ...
 ```
 <p align="center">
