@@ -15,12 +15,12 @@ The divisive and polarizing rhetoric in the 2016 presidential election sparked c
 
 Hate speech was identified using dictionary-based methods refined by logistic regression, Naive Bayes, and Recurrent Neural Network (RNN) machine learning classifiers. Quasi-experimental interrupted time series design was used to quantify the incidence and prevalence of hate speech — the former defined as the change in rate of hate speech and the latter the change in the amount of hate speech in a given time period.
 
-We found no conclusive evidence of changes in prevalence or incidence of hate speech around key events. While some events saw brief upticks in prevalence, overall levels of hate speech remained stable. Our analysis finds exploratory evidence of decreases in incidence of anti-LGBTQ+ hate speech (p < 0.001) over time coinciding with a Twitter policy change allowing users to directly report abuse.
+We found no conclusive evidence of changes in prevalence or incidence of hate speech around key events. While some events saw brief upticks in prevalence, overall levels of hate speech remained stable. Our analysis finds exploratory evidence of decreases in incidence of anti-LGBTQ+ hate speech (p < 0.001) over time coinciding with a [Twitter policy change](https://blog.twitter.com/official/en_us/a/2013/keep-up-with-conversations-on-twitter.html) allowing users to directly report abuse.
 
-The incidence and prevalence are visualized in the below plot. Incidence is represented by the change in slopes of the regression lines and prevalence the gap between the two regression lines at the date of interest. The most apparent change — bottom right facet — corresponds to the [Windsor vs. United States](https://www.oyez.org/cases/2012/12-307) case decided on June 26, 2013. However, it is confounded by a change in Twitter policy two months later. The [novel policy](https://blog.twitter.com/official/en_us/a/2013/keep-up-with-conversations-on-twitter.html) allowed users to directly report individual tweets for abuse.
+The incidence and prevalence are visualized in the below plot. Incidence is represented by the change in slopes of the regression lines and prevalence by the gap between the two regression lines at the date of interest. The most apparent change — bottom right facet — corresponds to the [Windsor vs. United States](https://www.oyez.org/cases/2012/12-307) case decided on June 26, 2013. However, it is confounded by a change in Twitter policy two months later.
 
 <p align="center">
-<img src="/img/posts/hate-speech/flagged_tweets_facets_bandwidth.png" width=90%>
+<img src="/img/posts/hate-speech/flagged_tweets_facets_bandwidth.png" width=95%>
 </p>
 
 This study required a broad range of disciplines. Collecting the tweets necessitated significant programming resources, manually labeling 6,000 tweets involved time management skills, classifying hate speech demanded traditional statistics and data science acumen, and the interrupted time series warranted statistics and domain-specific knowledge. The overall study design was inspired by a similar [paper on white nationalist rhetoric](https://alexandra-siegel.com/wp-content/uploads/2019/05/Siegel_et_al_election_hatespeech_qjps.pdf) by researchers at [New York University CSMaP lab](https://csmapnyu.org/).
@@ -37,15 +37,15 @@ You can read the paper in its entirety [here](https://raw.githubusercontent.com/
 
 ### Collecting tweets
 
-The first challenge was building a suitable dataset. We found no existing datasets that met our requirements; the most burdensome being the size. Our goal was to randomly sample the US population of Twitter users to obtain a representative sample of users and their timelines. We initially believed — based on the CSMaP paper — approximately 250,000 accounts would be necessary to obtain enough tweets that contain hate speech within the intervals of interest. The final dataset consists of approximately 100 million tweets spanning 160,000 accounts from 2006 to 2020. Importantly, the tweets are captured by first identifying users and then collecting their tweet history (i.e. their timeline) rather than collecting tweets regardless of user.
+The first challenge was building a suitable dataset. We found no existing datasets that met our requirements; the most burdensome being the size. Our goal was to randomly sample the US population of Twitter users to obtain a representative sample of users and their timelines. The final dataset consists of approximately 100 million tweets spanning 160,000 accounts from 2006 to 2020. Importantly, the tweets are captured by first identifying users and then collecting their tweet history (i.e. their timeline) rather than collecting tweets regardless of user.
 
-A simple random sample is not possible due to technical limitations which causes our sampling plan to be quasi-random with a known bias. The frequency of collected tweets plateaus in 2013 and then starts increasing in 2020 (below plot) rather than monotonically increasing over time with Twitter popularity. The associated accounts appear to skew towards 2012-2014 account opening dates (derived from the first known tweet) which may explain the plateau. The latter increase is most likely due to a limitation of being able to collect only the latest 3,240 tweets from a given user.
+A simple random sample is not possible due to technical limitations which causes our sampling plan to contain a known bias. The sample is random but only within a known portion of the unknown total population. The below plot illustrates the frequency of collected tweets plateaus in 2013 and then starts increasing in 2020 rather than monotonically increasing over time with Twitter popularity. The associated accounts appear to skew towards 2012-2014 account opening dates (derived from the first known tweet) which may explain the plateau. The latter increase is most likely due to a limitation of being able to collect only the latest 3,240 tweets from a given user.
 
 <p align="center">
-<img src="/img/posts/hate-speech/tweets_over_time.png" width=70%>
+<img src="/img/posts/hate-speech/tweets_over_time.png" width=75%>
 </p>
 
-The sampling was further hampered by the Twitter API restrictions which limits API calls to 900 per 15 minutes. A [Python script](https://github.com/joemarlo/hate-speech/blob/main/Tweets/pull_tweets.py) executed on a [Raspberry Pi microcomputer](https://en.wikipedia.org/wiki/Raspberry_Pi) was used to continuously make API calls for approximately 25 days and store the resulting data in a SQLite database.
+The sampling was executed through the Twitter API via the [Tweepy](https://www.tweepy.org/) library. The Twitter API limits API calls to 900 per 15 minutes which severely elongates the required time to pull enough tweets. A [Python script](https://github.com/joemarlo/hate-speech/blob/main/Tweets/pull_tweets.py) executed on a [Raspberry Pi microcomputer](https://en.wikipedia.org/wiki/Raspberry_Pi) was used to continuously make API calls for approximately 25 days and store the resulting data in a SQLite database.
 
 ### Classifying hate speech
 
@@ -53,20 +53,21 @@ Identifying hate speech is a two-step process. First, tweets containing key word
 
 #### First step: dictionary
 
-There is no universally accepted definition of hate speech, as academics and policymakers vary in their interpretations of what constitutes hate. We established an operational definition of hate speech and focused on defining hate speech with a broad interpretation, in order to cover a variety of messages and expressions that target and justify hate towards a specific the LGBTQ+ population.
+There is no universally accepted definition of hate speech, as academics and policymakers vary in their interpretations of what constitutes hate. We established an operational definition of hate speech and focused on defining hate speech with a broad interpretation, in order to cover a variety of messages and expressions that target and justify hate towards the LGBTQ+ population.
 
 A dictionary of terms and phrases that are associated with LGBTQ+ hate speech was built. We consulted [Hatebase](https://hatebase.org/) — an active database containing a lexicon of terms identified by internet users as hate speech.
 
-Regex pattern matching was used to flag tweets that contained language that resembled the pre-selected terms in the lexicon. Of the 92 million collected tweets 167,724 (0.18%) were identified as potential incidents of LGBTQ+ directed  slurs. This approach offers a crude approximation of instances of anti-LGBTQ+ speech. Notably, this approach is not able to separate tweets that explicitly condemn the use of anti-LGBTQ+ language from true incidents of slurs.
+[Regex pattern matching](https://en.wikipedia.org/wiki/Regular_expression) was used to flag tweets that contained language that resembled the pre-selected terms in the lexicon. Of the 92 million collected tweets 167,724 (0.18%) were identified as potential incidents of LGBTQ+ directed  slurs. This approach offers a crude approximation of instances of anti-LGBTQ+ speech. Notably, this approach is not able to separate tweets that explicitly condemn the use of anti-LGBTQ+ language from true incidents of slurs.
 
 #### Second step: modeling
 
 Several machine learning models were fit to disentangle true instances of anti-LGBTQ+ tweets from false positives identified by the regex. Prior to model fitting, 6,000 tweets were randomly sampled from the 167,724 tweets flagged in the first step. These 6,000 were coded by the three authors. The coding scheme identified each of the 6,000 tweets as either a true instance of anti-LGBTQ+ language or as a false positive. These labels were then used as training data for logistic regression word embeddings, Naive Bayes and RNN machine learning models. Of the 6,000 labeled tweets, 10% were removed and saved to assess out of sample accuracy while the remaining were used to train each of the candidate models outlined below.
 
-
 <p align="center">
-<img src="/img/posts/hate-speech/ROC.png" width=50%>
+<img src="/img/posts/hate-speech/ROC.png" width=55%>
 </p>
+
+Of the three candidate models, we selected the RNN due to its balance in [recall and precision](https://en.wikipedia.org/wiki/Precision_and_recall). Moreover, as more labeled training tweets are obtained (in further studies), the predictive power of the RNN will increase. The RNN model identified 32,554 tweets or 0.035% of the sample as containing anti-LGBTQ+ language. This is the equivalent of 35 in 100,000 tweets.
 
 <table class="table table-hover table-responsive" style="margin-left: auto; margin-right: auto; max-width: 70%">
  <thead>
@@ -95,8 +96,7 @@ Several machine learning models were fit to disentangle true instances of anti-L
 </tbody>
 </table>
 
-Of the three candidate models, we selected the RNN due to its balance in [recall and precision](https://en.wikipedia.org/wiki/Precision_and_recall). Moreover, as more labeled training tweets are obtained (in further studies), the predictive power of the RNN will increase. The RNN model identified 32,554 tweets or 0.035% of the sample as containing anti-LGBTQ+ language. This is the equivalent of 35 in 100,000 tweets.
-
+<br>
 
 ### Incidence and prevalence
 
@@ -105,7 +105,7 @@ The prevalence rate varies over time, generally increasing in the early years of
 The inflection point in mid 2013 is the most visually evident trend. Two other dates also show local changes in the prevalence rate: mid 2015 (legalization of same-sex marriage) and mid 2017 (transgender ban).
 
 <p align="center">
-<img src="/img/posts/hate-speech/flagged_tweets_vlines.png" width=70%>
+<img src="/img/posts/hate-speech/flagged_tweets_vlines.png" width=75%>
 </p>
 
 #### Analysis
@@ -132,13 +132,13 @@ $$Y = \alpha + \beta_{T_i} + \beta_{event} + \beta_{T_i} * \beta_{event} + \epsi
 Both of these models require specifying a bandwidth of data points to include in the analyses. We used the R package [rdrobust](https://rdpackages.github.io/rdrobust/) to select bandwidth via cross validation. The relevant coefficients testing incidence and prevalence for each of the six events are shown in the below plot. The Bonferroni adjustment was applied to all p values and confidence intervals to control for multiple testing and maintain a significance threshold of 0.05.
 
 <p align="center">
-<img src="/img/posts/hate-speech/flagged_tweets_estimates.png" width=70%>
+<img src="/img/posts/hate-speech/flagged_tweets_estimates.png" width=90%>
 </p>
 
-These same measures of incidence and prevalence are visualized in the below plot. Incidence is represented by the change in slopes of the regression lines and prevalence the gap between the two regression lines at the date of interest.
+These same measures of incidence and prevalence are visualized in the below plot. Incidence is represented by the change in slopes of the regression lines and prevalence by the gap between the two regression lines at the date of interest.
 
 <p align="center">
-<img src="/img/posts/hate-speech/flagged_tweets_facets_bandwidth.png" width=90%>
+<img src="/img/posts/hate-speech/flagged_tweets_facets_bandwidth.png" width=95%>
 </p>
 
 <br>
@@ -153,7 +153,7 @@ Shown in the below plot, the implementation of the new policy aligns with clear 
 
 
 <p align="center">
-<img src="/img/posts/hate-speech/flagged_tweets_policy_change.png" width=70%>
+<img src="/img/posts/hate-speech/flagged_tweets_policy_change.png" width=90%>
 </p>
 
 <br>
