@@ -28,15 +28,15 @@ span {
 }
 
 /* buttons */
-.btn, .btn:hover, .btn:active, .btn:visited {
+#button_update, #button_update:hover, #button_update:active, #button_update:visited {
     background-color: #2f3f42 !important;
     border-radius: 0;
     box-shadow: none;
     border: none;
     color: #f5f5f5 !important;
     font-weight: 300;
-    max-width: 45%;
-    min-width: 200px;
+    width: 200px;
+    min-width: 45%;
     word-wrap: break-word;
     white-space: normal;
     display: inline-block;
@@ -45,12 +45,40 @@ span {
     width: 100%;
 }
 
-.btn:hover {
+#button_update:hover {
   background-color: #415359 !important;
 }
 
-.btn:active {
+#button_update:active {
   background-color: #53666e !important;
+}
+
+.example_div {
+  width: 4%;
+  max-width: 30px;
+  height: 75px;
+  float: left;
+}
+
+.example_div > svg > g > rect {
+  width: 95%;
+  height: 30%;
+  border-radius: 0;
+  box-shadow: none;
+  border: solid;
+  stroke-width: 1;
+  margin: 0;
+  padding: 0 0 0 0;
+}
+
+.example_rect {
+
+}
+
+.example_div > svg > g > text {
+  font-size: 0.7em;
+  fill: #4d4d4d;
+  stroke: none;
 }
 
 .user_input_div {
@@ -83,10 +111,9 @@ span {
 /* this is the text */
 .user_input_div > svg > text {
   font-size: 0.5em;
-  fill: #424242;
+  fill: #4d4d4d;
   stroke: none;
 }
-
 
 .container_twenty_questions_dropdown {
   max-width: 300px;
@@ -143,7 +170,6 @@ select {
   fill: #4d4d4d;
   text-anchor: left;
 }
-
 
 .xaxis_label {
   font-size: 0.8em;
