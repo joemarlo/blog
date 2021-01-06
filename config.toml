@@ -12,7 +12,7 @@ googleAnalytics = ""
   # Use custom.css for your custom styling
   style = "custom"
   description = "Personal portfolio of Joe Marlo"
-  copyright = "&copy;2020 Joe Marlo"
+  copyright = "&copy;2021 Joe Marlo"
   sidebarAbout = [
     "I'm a statistics grad student @ NYU. <br> Based in New York."
   ]

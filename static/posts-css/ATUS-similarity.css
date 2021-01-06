@@ -35,7 +35,7 @@ span {
     border: none;
     color: #f5f5f5 !important;
     font-weight: 300;
-    width: 200px;
+    max-width: 200px;
     min-width: 45%;
     word-wrap: break-word;
     white-space: normal;
@@ -69,10 +69,6 @@ span {
   stroke-width: 1;
   margin: 0;
   padding: 0 0 0 0;
-}
-
-.example_rect {
-
 }
 
 .example_div > svg > g > text {
